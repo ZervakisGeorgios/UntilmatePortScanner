@@ -57,22 +57,26 @@ def validate_ip_address(address):
 
 def subnet_to_ip(subnet_address):
     '''
-    This function will produce a list of IP addresses should the user passes a subnet as an input
+    This function will produce a list of IP addresses should the user passes a subnet as an input. It will flag and exit
+    if the subnet is not valid.
 
     :param subnet_address: The subnet that the user passed via the txt file
     :return: The function will return a list of the IP addresses based on the given subnet
     '''
     list_of_ip_addresses = []
     #A for loop will loop all IP addresses from a given subnet
-    for address in ipaddress.ip_network(subnet_address):
-        # Each IP address will be converted to a string and appended into the list
-        list_of_ip_addresses.append(str(address))
+    try:
+        for address in ipaddress.ip_network(subnet_address):
+            # Each IP address will be converted to a string and appended into the list
+            list_of_ip_addresses.append(str(address))
 
-    return list_of_ip_addresses
-
-
-def validate_subnet(list_of_ip_addresses):
-    pass
+        return list_of_ip_addresses
+    except:
+        print("**************************************************************************************************")
+        print("************************* Invalid subnet or the subnet has host bits set *************************")
+        print("**************************************************************************************************")
+        usage()
+        sys.exit()
 
 
 def open_file(file_to_open):
