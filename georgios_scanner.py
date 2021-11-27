@@ -169,23 +169,43 @@ def worker():
         port = queue.get()
         if portscan(port):  # it will differe to UDP
             print("Port {} is open!".format(port))
-            open_ports.append(port)
+            open_ports['findings'].append(port)
 
 
 if __name__ == '__main__':
     usage()  # The banner is called
     # If the number of arguments passed is not equal to 4 or the arguments are not correct, the script terminates
     if (len(sys.argv) != 4) or (sys.argv[2] not in ("-t", "-u")) or (sys.argv[3] not in ("-b", "i")):
-        wrong_arguments()   # It informs the user that the wrong arguments were passed
-        usage()             # It will show the banner with the examples to the user again
-        sys.exit()          # The script terminates
+        wrong_arguments()  # It informs the user that the wrong arguments were passed
+        usage()  # It will show the banner with the examples to the user again
+        sys.exit()  # The script terminates
     elif sys.argv[1] in ("help", "-h", "h", "?", "--h", "--help", "/?"):  # Banner to be displayed if user wants help
         usage()
         sys.exit()
     elif validate_ip_address(sys.argv[1]):  # Execution block for a single IP address
-        print("valid ip")
-    elif ".txt" in sys.argv[1]:             # Execution block for txt file with multiple IPs
-        list_of_ips = open_file(sys.argv[1])
-        print(list_of_ips)
-    else:                                   # Execution block for wrong IP/file argument
+        print(f'Target ip: {sys.argv[1]}')
+        # scanning a single IP in here
+    elif ".txt" in sys.argv[1]:  # Execution block for txt file with multiple IPs
+        list_of_ips = open_file(sys.argv[1])  # Returns the list of entries found inside the file
+        print(list_of_ips)  # for testing
+        if len(list_of_ips) == 1:  # Execution block if a subnet is passed
+            print("One entry was found in the file. "
+                  "It will be treated as a subnet and the script will validate it now\n")
+            list_of_ips = subnet_to_ip(list_of_ips[0])  # Converts the subnet into IP addresses
+            print(f'The subnet was validated. The following list of IP addresses will be scanned: {list_of_ips}')
+        else:  # Execution block for multiple IP addresses
+            print("Validating the IP addresses")
+            for ip in list_of_ips:  # It loops the list of IP addresses to validate that the IPs are ok
+                if not validate_ip_address(ip):
+                    print("*********************************************************************************")
+                    print("* A NOT VALID IP ADDRESS WAS FOUND. PLEASE CORRECT THE IP ADDRESSES IN THE FILE *")
+                    print("*********************************************************************************")
+                    usage()
+                    sys.exit()
+            print("All IP addresses were scanned and validated")
+        # scanning multiple IPs or subnet IPs in here
+
+    else:  # Execution block for wrong IP/file argument
         wrong_arguments()
+        usage()
+        sys.exit()
