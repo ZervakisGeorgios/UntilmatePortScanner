@@ -2,19 +2,26 @@ import ipaddress
 import sys
 import json
 import time
+from datetime import datetime
 import socket
 import threading
 from queue import Queue
+from pprint import pprint
 
 # Queue module implements multi-producer/consumer queues useful in threaded https://docs.python.org/3/library/queue.html
-queue = Queue()
-port_list = range(1, 1024 + 1)  # The standard ports to be scanned
+# queue = Queue()
+basic_port_list = range(1, 1024 + 1)  # The standard ports to be scanned
 open_ports = {'findings': []}  # Initialises the dictionary that will store open ports
+# set variables to store most common risky ports according to https://nmap.org/book/port-scanning.html
+# https://www.dummies.com/programming/networking/commonly-hacked-ports/
+# https://specopssoft.com/blog/open-ports-and-their-vulnerabilities/
+risk_ports_tcp = {21, 22, 23, 25, 53, 80, 81, 110, 111, 135, 137, 138, 139, 143, 145, 443, 445}
+risk_ports_udp = {53, 67, 68, 69, 123, 135, 137, 138, 139, 162, 445, 500, 514, 520, 631}
 
 
 def usage():
     """
-    The method usage prints out the banner of the script as well as examples of the usage and information about The Creator
+    This function prints out the banner of the script as well as examples of the usage and information about The Creator
     """
     print('''
 
@@ -151,11 +158,19 @@ def fill_queue(port_list_to_fill):
     :param port_list_to_fill: The list of ports to be scanned
     :return: Returns a queue with the ports to be scanned. It will be used from the threading
     """
+    queue = Queue()
     for port in port_list_to_fill:
         queue.put(port)
+    return queue
 
 
 def portscan(target, port):
+    """
+
+    :param target: The target IP to be scanned
+    :param port: The port in which the scan will run
+    :return: It returns true if the port is open for the specified IP address
+    """
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect((target, port))  # it should change to sys.argv[1] or a dynamic variable
@@ -164,13 +179,23 @@ def portscan(target, port):
         return False
 
 
-def worker():
+def worker(queue, target, risky_ports):
+    """
+    This function will loop all ports by calling the portscan function. It will append any open port to the dictionary
+    :param queue: The queue that holds the ports to be scanned
+    :param target: The target IP address
+    :param risky_ports: The set of risky ports
+    :return:
+    """
     while not queue.empty():
         port = queue.get()
-        if portscan(port):  # it will differe to UDP
-            print("Port {} is open!".format(port))
-            open_ports['findings'].append(port)
-
+        if portscan(target, port):  # it will differe to UDP
+            print("Port {} is open!".format(port))  # prints the open ports in the terminal
+            if port in risky_ports:  # If the open port is within the risky ports, it is flagged as risky in the output
+                # Port is turned from int to str to comply with the instructions
+                open_ports['findings'].append({"ip_address": target, "open_port": str(port), "risk_port": True})
+            else:
+                open_ports['findings'].append({"ip_address": target, "open_port": str(port), "risk_port": False})
 
 if __name__ == '__main__':
     usage()  # The banner is called
@@ -185,6 +210,26 @@ if __name__ == '__main__':
     elif validate_ip_address(sys.argv[1]):  # Execution block for a single IP address
         print(f'Target ip: {sys.argv[1]}')
         # scanning a single IP in here
+        queue = fill_queue(basic_port_list)  # Initialises the Queue
+        thread_list = []  # Initialises the thread list
+        t1 = datetime.now()  # Starts the counter
+        for t in range(1100):  # specify the number of threads you want to run
+            thread = threading.Thread(target=worker, args=(queue, sys.argv[1], risk_ports_tcp,))  # targets the worker function
+            thread_list.append(thread)  # all threads into a list
+        # starts the threads
+        for thread in thread_list:
+            thread.start()
+        # waits until all threads are finished to execute the last print statement
+        for thread in thread_list:
+            thread.join()
+
+        print(f'Open ports for {sys.argv[1]}: ', open_ports['findings'])
+        t2 = datetime.now()
+        total = t2 - t1
+        print("Scanning Completed in: ", total)
+
+        write_json_file(open_ports)
+
     elif ".txt" in sys.argv[1]:  # Execution block for txt file with multiple IPs
         list_of_ips = open_file(sys.argv[1])  # Returns the list of entries found inside the file
         print(list_of_ips)  # for testing
