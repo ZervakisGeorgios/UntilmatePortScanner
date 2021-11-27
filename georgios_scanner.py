@@ -2,6 +2,14 @@ import ipaddress
 import sys
 import json
 import time
+import socket
+import threading
+from queue import Queue
+
+# Queue module implements multi-producer/consumer queues useful in threaded https://docs.python.org/3/library/queue.html
+queue = Queue()
+port_list = range(1, 1024 + 1)  # The standard ports to be scanned
+open_ports = {'findings': []}  # Initialises the dictionary that will store open ports
 
 
 def usage():
@@ -27,8 +35,8 @@ def usage():
     /\\        /  \\                                                     \\\  //          \\\  //
    /  \\      /    \\                                                     \\\//            \\\//
 
-    USAGE: python georgiosz_scanner.py IP etc.
-    Example: python georgiosz_dos.py https://www.example.com
+    USAGE: python georgiosz_scanner.py IP -t -b
+    Example: python georgiosz_dos.py 1.1.1.1 -t -b
 
     The georgiosz_scanner.py programme was created by Georgios Zervakis and it is the ultimate port scanner
     tool for several network protocols
@@ -50,11 +58,12 @@ def validate_ip_address(address):
         ip = ipaddress.ip_address(address)
         return True
     except ValueError:
-        print("**************************************************************************************************")
-        print("*************************************** Invalid IP address ***************************************")
-        print("**************************************************************************************************")
-        usage()
-        sys.exit()
+        return False
+        # print("**************************************************************************************************")
+        # print("*************************************** Invalid IP address ***************************************")
+        # print("**************************************************************************************************")
+        # usage()
+        # sys.exit()
 
 
 def subnet_to_ip(subnet_address):
@@ -93,11 +102,12 @@ def open_file(file_to_open):
             # contents = f.readlines() #This will provide liens with the \n as suffix: ['1.1.1.1\n', '2.2.2.2']
             list_of_ip_addresses = f.read().splitlines()  # It will store the actual values without the \n
         f.close()
+        print(f'File {file_to_open} was loaded successfully')
 
         return list_of_ip_addresses
     except IOError:
         print("******************************************************************************")
-        print("************************COULD NOT OPEN THE FILE*******************************")
+        print(f'*************** COULD NOT OPEN THE FILE {file_to_open} **********************')
         print("******************************************************************************")
         usage()
         sys.exit()
@@ -124,6 +134,10 @@ def write_json_file(data_to_write):
 
 
 def wrong_arguments():
+    """
+    This function will be used to flag wrong arguments were passed
+    :return: It will not return anything, but it will print a useful message to the user
+    """
     print("************************************************************************************")
     print("* You have not provided the correct number of arguments. Or not expected arguments *")
     print("* were received.                                                                   *")
@@ -131,17 +145,47 @@ def wrong_arguments():
     print("************************************************************************************")
 
 
+def fill_queue(port_list_to_fill):
+    """
+    This function creates a queue based on the list of ports passed to it
+    :param port_list_to_fill: The list of ports to be scanned
+    :return: Returns a queue with the ports to be scanned. It will be used from the threading
+    """
+    for port in port_list_to_fill:
+        queue.put(port)
+
+
+def portscan(target, port):
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.connect((target, port))  # it should change to sys.argv[1] or a dynamic variable
+        return True
+    except:
+        return False
+
+
+def worker():
+    while not queue.empty():
+        port = queue.get()
+        if portscan(port):  # it will differe to UDP
+            print("Port {} is open!".format(port))
+            open_ports.append(port)
+
+
 if __name__ == '__main__':
     usage()  # The banner is called
-    print(f'first argument {sys.argv[2]}')
-    print(f'Second argument {sys.argv[3]}')
-    print(len(sys.argv))
     # If the number of arguments passed is not equal to 4 or the arguments are not correct, the script terminates
     if (len(sys.argv) != 4) or (sys.argv[2] not in ("-t", "-u")) or (sys.argv[3] not in ("-b", "i")):
         wrong_arguments()   # It informs the user that the wrong arguments were passed
         usage()             # It will show the banner with the examples to the user again
         sys.exit()          # The script terminates
-    elif sys.argv[1] in ("help", "-h", "h", "?", "--h", "--help", "/?"):
+    elif sys.argv[1] in ("help", "-h", "h", "?", "--h", "--help", "/?"):  # Banner to be displayed if user wants help
         usage()
         sys.exit()
-    
+    elif validate_ip_address(sys.argv[1]):  # Execution block for a single IP address
+        print("valid ip")
+    elif ".txt" in sys.argv[1]:             # Execution block for txt file with multiple IPs
+        list_of_ips = open_file(sys.argv[1])
+        print(list_of_ips)
+    else:                                   # Execution block for wrong IP/file argument
+        wrong_arguments()
