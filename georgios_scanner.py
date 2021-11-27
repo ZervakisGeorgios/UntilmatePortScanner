@@ -212,9 +212,14 @@ if __name__ == '__main__':
         # scanning a single IP in here
         queue = fill_queue(basic_port_list)  # Initialises the Queue
         thread_list = []  # Initialises the thread list
+        if sys.argv[2] == "-t":  # Set risky ports for TCP
+            risk_ports = risk_ports_tcp
+        else:  # Set risky ports for UDP
+            risk_ports = risk_ports_udp
         t1 = datetime.now()  # Starts the counter
         for t in range(1100):  # specify the number of threads you want to run
-            thread = threading.Thread(target=worker, args=(queue, sys.argv[1], risk_ports_tcp,))  # targets the worker function
+            # targets the worker function. It passes the queue, target IP and risky ports (TCP/UDP) as arguments
+            thread = threading.Thread(target=worker, args=(queue, sys.argv[1], risk_ports,))
             thread_list.append(thread)  # all threads into a list
         # starts the threads
         for thread in thread_list:
