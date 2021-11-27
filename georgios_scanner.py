@@ -189,7 +189,7 @@ def worker(queue, target, risky_ports):
     """
     while not queue.empty():
         port = queue.get()
-        if portscan(target, port):  # it will differe to UDP
+        if portscan(target, port):  # it will differ to UDP
             print("Port {} is open!".format(port))  # prints the open ports in the terminal
             if port in risky_ports:  # If the open port is within the risky ports, it is flagged as risky in the output
                 # Port is turned from int to str to comply with the instructions
@@ -213,8 +213,10 @@ if __name__ == '__main__':
         queue = fill_queue(basic_port_list)  # Initialises the Queue
         thread_list = []  # Initialises the thread list
         if sys.argv[2] == "-t":  # Set risky ports for TCP
+            print("Scanning TCP ports")
             risk_ports = risk_ports_tcp
-        else:  # Set risky ports for UDP
+        else:  # Set risky ports for UDP ##############IT WONT WORK, NEW WORKER/PORTSCAN FUNCTIONS ARE REQUIRED. PUT THE RANGE THREAD FOR LOOP IN THIS IF STATEMENT FOR TCP/UDP, CREATE WORKER PORTSCAN FOR UDP
+            print("Scanning UDP ports")
             risk_ports = risk_ports_udp
         t1 = datetime.now()  # Starts the counter
         for t in range(1100):  # specify the number of threads you want to run
