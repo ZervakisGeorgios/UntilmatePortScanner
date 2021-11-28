@@ -14,3 +14,14 @@ This repository hosts a basic IPv4 port scanner written in Python 3.9. It was cr
 - __Infromation Modules__ :
 
 - [x] IPv4 Port Scanner for both TCP/UDP network protocols
+
+## ✔️ ***Installation Linux/Windows*** :
+$ git clone git@github.com:ZervakisGeorgios/UntilmatePortScanner.git
+
+## ✔️ ***About*** :
+
+$ Twitter : https://twitter.com/@Georgios_zm
+
+$ Linkedin: https://www.linkedin.com/in/georgios-zervakis/
+
+$ Tested On : Windows / Ubuntu / Kali Linux /
