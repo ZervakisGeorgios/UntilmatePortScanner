@@ -152,3 +152,18 @@ $ Twitter : https://twitter.com/@Georgios_zm
 $ Linkedin: https://www.linkedin.com/in/georgios-zervakis/
 
 $ Tested On : Windows / Ubuntu / Kali Linux /
+
+
+## ✔️ ***Appendix*** :
+References for the research that took place to define TCP/UDP risk ports
+https://www.dummies.com/programming/networking/commonly-hacked-ports/
+https://nmap.org/book/port-scanning.html
+https://specopssoft.com/blog/open-ports-and-their-vulnerabilities/
+
+Why we used socket.connect_ex instead of socket.connect
+https://stackoverflow.com/questions/48318266/python-socket-connect-vs-connect-ex
+
+Caveats on the UDP scanning
+https://null-byte.wonderhowto.com/how-to/sploit-make-python-port-scanner-0161074/
+
+Future works: Add functionality to scan IPv6 addresses. Add functionality to scan common risk high ports
