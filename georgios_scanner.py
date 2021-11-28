@@ -109,7 +109,7 @@ def open_file(file_to_open):
             # contents = f.readlines() #This will provide liens with the \n as suffix: ['1.1.1.1\n', '2.2.2.2']
             list_of_ip_addresses = f.read().splitlines()  # It will store the actual values without the \n
         f.close()
-        print(f'File {file_to_open} was loaded successfully')
+        print(f'*** File {file_to_open} was loaded successfully ***')
 
         return list_of_ip_addresses
     except IOError:
@@ -258,7 +258,7 @@ if __name__ == '__main__':
         sys.exit()
     elif validate_ip_address(sys.argv[1]):  # Execution block for a single IP address
         print(f'Target ip: {sys.argv[1]}')
-        # scanning a single IP in here
+        # scanning a single IP in here, query to use #python port_stanner_v1.py 192.168.0.23 -t -b
         queue = fill_queue(basic_port_list)  # Initialises the Queue
         thread_list = []  # Initialises the thread list
         if sys.argv[2] == "-t":  # Set risky ports for TCP
@@ -282,14 +282,14 @@ if __name__ == '__main__':
         for thread in thread_list:
             thread.join()
 
-        print(f'Open ports for {sys.argv[1]}: ', open_ports['findings'])
+        # print(f'Open ports for {sys.argv[1]}: ', open_ports['findings'])  # for testing, prints out the dictionary
         t2 = datetime.now()
-        total = t2 - t1
+        total = t2 - t1  # calculates the overall time
         print("Scanning Completed in: ", total)
 
-        write_json_file(open_ports)
+        write_json_file(open_ports)  # writes the data in the output.txt file in JSON format
 
-    elif ".txt" in sys.argv[1]:  # Execution block for txt file with multiple IPs
+    elif ".txt" in sys.argv[1]:  # Execution block for txt file with multiple IPs, test with python port_stanner_v1.py ip_addresses.txt -t -b
         list_of_ips = open_file(sys.argv[1])  # Returns the list of entries found inside the file
         print(list_of_ips)  # for testing
         if len(list_of_ips) == 1:  # Execution block if a subnet is passed
@@ -298,7 +298,7 @@ if __name__ == '__main__':
             list_of_ips = subnet_to_ip(list_of_ips[0])  # Converts the subnet into IP addresses
             print(f'The subnet was validated. The following list of IP addresses will be scanned: {list_of_ips}')
         else:  # Execution block for multiple IP addresses
-            print("Validating the IP addresses")
+            print("Validating IP addresses")
             for ip in list_of_ips:  # It loops the list of IP addresses to validate that the IPs are ok
                 if not validate_ip_address(ip):
                     print("*********************************************************************************")
@@ -307,7 +307,40 @@ if __name__ == '__main__':
                     usage()
                     sys.exit()
             print("All IP addresses were scanned and validated")
+            # Deleting duplicates https://www.w3schools.com/python/python_howto_remove_duplicates.asp
+            list_of_ips = list(dict.fromkeys(list_of_ips))
+            print(list_of_ips)  # for testing
         # scanning multiple IPs or subnet IPs in here
+        for ip in list_of_ips:
+            queue = fill_queue(basic_port_list)  # Initialises the Queue
+            thread_list = []  # Initialises the thread list
+            if sys.argv[2] == "-t":  # Set risky ports for TCP
+                print("Scanning TCP ports")
+                risk_ports = risk_ports_tcp
+                for t in range(1100):  # specify the number of threads you want to run
+                    # targets the worker function. It passes the queue, target IP and risky ports (TCP/UDP) as arguments
+                    thread = threading.Thread(target=worker, args=(queue, ip, risk_ports,))
+                    thread_list.append(thread)  # all threads into a list
+            else:
+                print("Scanning UDP ports")
+                risk_ports = risk_ports_udp
+                for t in range(1100):  # specify the number of threads you want to run
+                    # targets the worker function. It passes the queue, target IP and risky ports (TCP/UDP) as arguments
+                    thread = threading.Thread(target=worker_udp, args=(queue, ip, risk_ports,))
+                    thread_list.append(thread)  # all threads into a list
+            t1 = datetime.now()  # Starts the counter
+            for thread in thread_list:
+                thread.start()
+            # waits until all threads are finished to execute the last print statement
+            for thread in thread_list:
+                thread.join()
+
+            print(f'Open ports for {ip}: ', open_ports['findings'])
+            t2 = datetime.now()
+            total = t2 - t1
+            print(f'Scanning Completed for {ip} : ', total)
+
+        write_json_file(open_ports)
 
     else:  # Execution block for wrong IP/file argument
         wrong_arguments()
