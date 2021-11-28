@@ -35,7 +35,22 @@ Usage
         -t                  Scan TCP ports
         -u                  Scan UDP ports
         -b                  Perform a basic scan. This involved scanning ports 1-1024.
-                              
+ 
+Example
+-------
+
+::
+
+    $ python3 georgios_scanner.py 192.168.0.23 -t -b
+    -- banner omitted --
+    Target ip: 192.168.0.23
+    Scanning TCP ports
+    Port 80 is open!
+    Port 135 is open!
+    Port 139 is open!
+    Port 445 is open!
+    Scanning Completed in:  0:00:02.231671
+    
 
 ## ✔️ ***About*** :
 
