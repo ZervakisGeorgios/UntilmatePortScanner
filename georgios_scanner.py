@@ -10,7 +10,7 @@ from pprint import pprint
 
 # Queue module implements multi-producer/consumer queues useful in threaded https://docs.python.org/3/library/queue.html
 # queue = Queue()
-basic_port_list = range(1, 1024 + 1)  # The standard ports to be scanned
+basic_port_list = range(1, 1025)  # The standard ports to be scanned 1-1024
 open_ports = {'findings': []}  # Initialises the dictionary that will store open ports
 # set variables to store most common risky ports according to https://nmap.org/book/port-scanning.html
 # https://www.dummies.com/programming/networking/commonly-hacked-ports/
@@ -264,15 +264,18 @@ if __name__ == '__main__':
         if sys.argv[2] == "-t":  # Set risky ports for TCP
             print("Scanning TCP ports")
             risk_ports = risk_ports_tcp
-        else:  # Set risky ports for UDP ##############IT WONT WORK, NEW WORKER/PORTSCAN FUNCTIONS ARE REQUIRED. PUT THE RANGE THREAD FOR LOOP IN THIS IF STATEMENT FOR TCP/UDP, CREATE WORKER PORTSCAN FOR UDP
+            for t in range(1100):  # specify the number of threads you want to run
+                # targets the worker function. It passes the queue, target IP and risky ports (TCP/UDP) as arguments
+                thread = threading.Thread(target=worker, args=(queue, sys.argv[1], risk_ports,))
+                thread_list.append(thread)  # all threads into a list
+        else:
             print("Scanning UDP ports")
             risk_ports = risk_ports_udp
+            for t in range(1100):  # specify the number of threads you want to run
+                # targets the worker function. It passes the queue, target IP and risky ports (TCP/UDP) as arguments
+                thread = threading.Thread(target=worker_udp, args=(queue, sys.argv[1], risk_ports,))
+                thread_list.append(thread)  # all threads into a list
         t1 = datetime.now()  # Starts the counter
-        for t in range(1100):  # specify the number of threads you want to run
-            # targets the worker function. It passes the queue, target IP and risky ports (TCP/UDP) as arguments
-            thread = threading.Thread(target=worker, args=(queue, sys.argv[1], risk_ports,))
-            thread_list.append(thread)  # all threads into a list
-        # starts the threads
         for thread in thread_list:
             thread.start()
         # waits until all threads are finished to execute the last print statement
