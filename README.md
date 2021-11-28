@@ -140,6 +140,7 @@ Contents of output.txt
     }
     
 Contents of ip_addresses.txt
+
     192.168.0.1
     192.168.0.23
     
