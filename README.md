@@ -28,7 +28,9 @@ Usage
 
     Arguments:
         <IP>                A single IPv4 address
-        <file-path>         The path to the file containing multiple IPv4 addresses. The form of the addresses should be either one                             IPv4 address in each line of the file OR a subnet in the first line of the file. The subnet will be analysed to get the IP addresses from within it. The script cannot analyse subnets where the host bits are set.
+        <file-path>         The path to the file containing multiple IPv4 addresses. The form of the addresses should be either one 
+                            IPv4 address in each line of the file OR a subnet in the first line of the file. The subnet will be analysed to get 
+                            the IP addresses from within it. The script cannot analyse subnets where the host bits are set.
         
                               
 
