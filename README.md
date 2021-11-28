@@ -56,16 +56,19 @@ Contents of output.txt
 ::
     {
     "findings": [
+        
         {
             "ip_address": "192.168.0.23",
             "open_port": "80",
             "risk_port": true
         },
+        
         {
             "ip_address": "192.168.0.23",
             "open_port": "135",
             "risk_port": true
         },
+        
         {
             "ip_address": "192.168.0.23",
             "open_port": "139",
