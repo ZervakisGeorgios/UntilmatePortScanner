@@ -11,7 +11,7 @@ This repository hosts a basic IPv4 port scanner written in Python 3.9. It was cr
 
 ## ✔️ ***Features***:
 
-- __Infromation Modules__ :
+- __Information Modules__ :
 
 - [x] IPv4 Port Scanner for both TCP/UDP network protocols
 
