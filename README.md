@@ -39,7 +39,7 @@ Usage
     addresses. It will flag with a bool variable ports that should be investigated. The list of risk prots is different for 
     TCP/UDP protocols. A thorough research took place to define these lists.
  
-Example
+Example 1 - Single IPv4 address
 -------
 
 
@@ -83,6 +83,61 @@ Contents of output.txt
         }
     ]
     }
+    
+Example 2 - Scanning Multiple IP addresses
+-------
+    $ python port_stanner_v1.py ip_addresses.txt -t -b
+    -- banner omitted --
+    *** File ip_addresses.txt was loaded successfully ***
+    Validating IP addresses
+    All IP addresses were scanned and validated
+    Scanning TCP ports
+    Port 53 is open!
+    Port 80 is open!
+    Scanning Completed for 192.168.0.1 :  0:00:03.768897
+    Scanning TCP ports
+    Port 80 is open!
+    Port 135 is open!
+    Port 139 is open!
+    Port 445 is open!
+    Scanning Completed for 192.168.0.23 :  0:00:02.233892
+    
+Contents of output.txt
+
+    {
+    "findings": [
+        {
+            "ip_address": "192.168.0.1",
+            "open_port": "53",
+            "risk_port": true
+        },
+        {
+            "ip_address": "192.168.0.1",
+            "open_port": "80",
+            "risk_port": true
+        },
+        {
+            "ip_address": "192.168.0.23",
+            "open_port": "80",
+            "risk_port": true
+        },
+        {
+            "ip_address": "192.168.0.23",
+            "open_port": "135",
+            "risk_port": true
+        },
+        {
+            "ip_address": "192.168.0.23",
+            "open_port": "139",
+            "risk_port": true
+        },
+        {
+            "ip_address": "192.168.0.23",
+            "open_port": "445",
+            "risk_port": true
+        }
+    ]
+}
     
 
 ## ✔️ ***About*** :
