@@ -31,7 +31,10 @@ Usage
         <file-path>         The path to the file containing multiple IPv4 addresses. The form of the addresses should be either one 
                             IPv4 address in each line of the file OR a subnet in the first line of the file. The subnet will be analysed to get 
                             the IP addresses from within it. The script cannot analyse subnets where the host bits are set.
-        
+    Options:
+        -t                  Scan TCP ports
+        -u                  Scan UDP ports
+        -b                  Perform a basic scan. This involved scanning ports 1-1024.
                               
 
 ## ✔️ ***About*** :
