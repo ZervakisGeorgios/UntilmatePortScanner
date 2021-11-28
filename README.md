@@ -166,4 +166,7 @@ https://stackoverflow.com/questions/48318266/python-socket-connect-vs-connect-ex
 Caveats on the UDP scanning
 https://null-byte.wonderhowto.com/how-to/sploit-make-python-port-scanner-0161074/
 
+Source that was used to build the write_to_json function
+https://stackoverflow.com/questions/12309269/how-do-i-write-json-data-to-a-file
+
 Future works: Add functionality to scan IPv6 addresses. Add functionality to scan common risk high ports
