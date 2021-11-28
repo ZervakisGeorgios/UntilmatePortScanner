@@ -21,7 +21,6 @@ $ git clone git@github.com:ZervakisGeorgios/UntilmatePortScanner.git
 Usage
 -----
 
-::
 
     Usage:
         python georgios_scanner.py [<arguments>] [options]
@@ -39,7 +38,6 @@ Usage
 Example
 -------
 
-::
 
     $ python3 georgios_scanner.py 192.168.0.23 -t -b
     -- banner omitted --
