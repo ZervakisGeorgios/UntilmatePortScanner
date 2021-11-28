@@ -50,6 +50,34 @@ Example
     Port 139 is open!
     Port 445 is open!
     Scanning Completed in:  0:00:02.231671
+  
+Contents of output.txt
+
+::
+    {
+    "findings": [
+        {
+            "ip_address": "192.168.0.23",
+            "open_port": "80",
+            "risk_port": true
+        },
+        {
+            "ip_address": "192.168.0.23",
+            "open_port": "135",
+            "risk_port": true
+        },
+        {
+            "ip_address": "192.168.0.23",
+            "open_port": "139",
+            "risk_port": true
+        },
+        {
+            "ip_address": "192.168.0.23",
+            "open_port": "445",
+            "risk_port": true
+        }
+    ]
+    }
     
 
 ## ✔️ ***About*** :
