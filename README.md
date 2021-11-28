@@ -53,7 +53,6 @@ Example
   
 Contents of output.txt
 
-::
 
     {
     "findings": [
