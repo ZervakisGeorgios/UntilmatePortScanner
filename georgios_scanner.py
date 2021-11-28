@@ -166,30 +166,79 @@ def fill_queue(port_list_to_fill):
 
 def portscan(target, port):
     """
-
+    This function creates the socket to perform port scanning. Based on the following resource, the inbuilt function
+    connect_ex is more efficient compared to the connect function
+    https://stackoverflow.com/questions/48318266/python-socket-connect-vs-connect-ex
     :param target: The target IP to be scanned
     :param port: The port in which the scan will run
     :return: It returns true if the port is open for the specified IP address
     """
     try:
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.connect((target, port))  # it should change to sys.argv[1] or a dynamic variable
-        return True
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # socket_family, socket_type
+        code = sock.connect_ex((target, port))
+        if code == 0:
+            sock.close()
+            return True
     except:
         return False
+    # try:
+    #     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # socket_family, socket_type
+    #     sock.connect((target, port))  # it should change to sys.argv[1] or a dynamic variable
+    #     return True
+    # except:
+    #     return False
 
 
-def worker(queue, target, risky_ports):
+def worker(queue_passed, target, risky_ports):
     """
     This function will loop all ports by calling the portscan function. It will append any open port to the dictionary
-    :param queue: The queue that holds the ports to be scanned
+    :param queue_passed: The queue that holds the ports to be scanned
     :param target: The target IP address
     :param risky_ports: The set of risky ports
     :return:
     """
-    while not queue.empty():
-        port = queue.get()
+    while not queue_passed.empty():
+        port = queue_passed.get()
         if portscan(target, port):  # it will differ to UDP
+            print("Port {} is open!".format(port))  # prints the open ports in the terminal
+            if port in risky_ports:  # If the open port is within the risky ports, it is flagged as risky in the output
+                # Port is turned from int to str to comply with the instructions
+                open_ports['findings'].append({"ip_address": target, "open_port": str(port), "risk_port": True})
+            else:
+                open_ports['findings'].append({"ip_address": target, "open_port": str(port), "risk_port": False})
+
+
+def portscan_udp(target, port):
+    """
+    This function creates the socket to perform port scanning on UDP ports. If a firewall blocked access to the UDP
+    ports, this script wrongly will return that a port is open as it will not receive an ICMP reply based on the link:
+    https://null-byte.wonderhowto.com/how-to/sploit-make-python-port-scanner-0161074/
+    :param target: The target IP to be scanned
+    :param port: The port in which the scan will run
+    :return: It returns true if the port is open for the specified IP address
+    """
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # socket_family, socket_type
+        code = sock.connect_ex((target, port))
+        if code == 0:
+            sock.close()
+            return True
+    except:
+        return False
+
+
+def worker_udp(queue_passed, target, risky_ports):
+    """
+    This function will loop all ports by calling the portscan_udp function. It will append any open port to the
+    dictionary
+    :param queue_passed: The queue that holds the ports to be scanned
+    :param target: The target IP address
+    :param risky_ports: The set of risky ports
+    :return:
+    """
+    while not queue_passed.empty():
+        port = queue_passed.get()
+        if portscan_udp(target, port):  # it will differ to UDP
             print("Port {} is open!".format(port))  # prints the open ports in the terminal
             if port in risky_ports:  # If the open port is within the risky ports, it is flagged as risky in the output
                 # Port is turned from int to str to comply with the instructions
