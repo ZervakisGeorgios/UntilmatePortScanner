@@ -37,7 +37,7 @@ Usage
     
     *  The file to be loaded into the script should be a txt file with the extension .txt
     ** An output.txt file will be generated at the end of the execution to store all open ports for all target IPv4
-       addresses. It will flag with a bool variable ports that should be investigated. The list of risk prots is different for 
+       addresses. It will flag with a bool variable ports that should be investigated. The list of risk ports is different for 
        TCP/UDP protocols. A thorough research took place to define these lists.
  
 Example 1 - Single IPv4 address
@@ -150,7 +150,7 @@ Contents of ip_addresses.txt
 
 $ Twitter : https://twitter.com/@Georgios_zm
 
-$ Linkedin: https://www.linkedin.com/in/georgios-zervakis/
+$ LinkedIn: https://www.linkedin.com/in/georgios-zervakis/
 
 $ Tested On : Windows / Ubuntu / Kali Linux /
 
