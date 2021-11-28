@@ -42,11 +42,14 @@ def usage():
     /\\        /  \\                                                     \\\  //          \\\  //
    /  \\      /    \\                                                     \\\//            \\\//
 
-    USAGE: python georgiosz_scanner.py IP -t -b
-    Example: python georgiosz_dos.py 1.1.1.1 -t -b
+    USAGE: python georgios_scanner.py <IP> -t -b
+           python georgios_scanner.py <file-path> -t -b
+    Example: python georgios_scanner.py 192.168.0.1 -t -b
+             python georgios_scanner.py ip_adresses.txt -t -b
 
-    The georgiosz_scanner.py programme was created by Georgios Zervakis and it is the ultimate port scanner
-    tool for several network protocols
+    The georgios_scanner.py programme was created by Georgios Zervakis to perform as a basic port scanner tool for   
+    several network protocols
+    
     Linkedin : https://www.linkedin.com/in/georgios-zervakis/
     Tweeter  : @Georgios_zm
     Website  : georgiosnetworks.com
@@ -106,7 +109,6 @@ def open_file(file_to_open):
     list_of_ip_addresses = []
     try:
         with open(file_to_open) as f:
-            # contents = f.readlines() #This will provide liens with the \n as suffix: ['1.1.1.1\n', '2.2.2.2']
             list_of_ip_addresses = f.read().splitlines()  # It will store the actual values without the \n
         f.close()
         print(f'*** File {file_to_open} was loaded successfully ***')
@@ -181,12 +183,6 @@ def portscan(target, port):
             return True
     except:
         return False
-    # try:
-    #     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # socket_family, socket_type
-    #     sock.connect((target, port))  # it should change to sys.argv[1] or a dynamic variable
-    #     return True
-    # except:
-    #     return False
 
 
 def worker(queue_passed, target, risky_ports):
@@ -258,7 +254,7 @@ if __name__ == '__main__':
         sys.exit()
     elif validate_ip_address(sys.argv[1]):  # Execution block for a single IP address
         print(f'Target ip: {sys.argv[1]}')
-        # scanning a single IP in here, query to use #python port_stanner_v1.py 192.168.0.23 -t -b
+        # scanning a single IP in here, query to use
         queue = fill_queue(basic_port_list)  # Initialises the Queue
         thread_list = []  # Initialises the thread list
         if sys.argv[2] == "-t":  # Set risky ports for TCP
@@ -282,16 +278,14 @@ if __name__ == '__main__':
         for thread in thread_list:
             thread.join()
 
-        # print(f'Open ports for {sys.argv[1]}: ', open_ports['findings'])  # for testing, prints out the dictionary
         t2 = datetime.now()
         total = t2 - t1  # calculates the overall time
         print("Scanning Completed in: ", total)
 
         write_json_file(open_ports)  # writes the data in the output.txt file in JSON format
 
-    elif ".txt" in sys.argv[1]:  # Execution block for txt file with multiple IPs, test with python port_stanner_v1.py ip_addresses.txt -t -b
+    elif ".txt" in sys.argv[1]:  # Execution block for txt file with multiple IPs
         list_of_ips = open_file(sys.argv[1])  # Returns the list of entries found inside the file
-        print(list_of_ips)  # for testing
         if len(list_of_ips) == 1:  # Execution block if a subnet is passed
             print("One entry was found in the file. "
                   "It will be treated as a subnet and the script will validate it now\n")
@@ -335,7 +329,6 @@ if __name__ == '__main__':
             for thread in thread_list:
                 thread.join()
 
-            print(f'Open ports for {ip}: ', open_ports['findings'])
             t2 = datetime.now()
             total = t2 - t1
             print(f'Scanning Completed for {ip} : ', total)
@@ -346,3 +339,6 @@ if __name__ == '__main__':
         wrong_arguments()
         usage()
         sys.exit()
+
+# TODO: Add functionality for enhanced scanning e.g. scan dedicated risk high ports
+# TODO: Add functionality for IPv6
