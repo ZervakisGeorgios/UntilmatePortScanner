@@ -35,9 +35,10 @@ Usage
         -b                  Perform a basic scan. This involved scanning ports 1-1024.
         
     
-    *** An output.txt file will be generated at the end of the execution to store all open ports for all target IPv4
-    addresses. It will flag with a bool variable ports that should be investigated. The list of risk prots is different for 
-    TCP/UDP protocols. A thorough research took place to define these lists.
+    *  The file to be loaded into the script should be a txt file with the extention .txt
+    ** An output.txt file will be generated at the end of the execution to store all open ports for all target IPv4
+       addresses. It will flag with a bool variable ports that should be investigated. The list of risk prots is different for 
+       TCP/UDP protocols. A thorough research took place to define these lists.
  
 Example 1 - Single IPv4 address
 -------
