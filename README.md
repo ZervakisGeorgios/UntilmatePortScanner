@@ -3,3 +3,14 @@
 [![Stage](https://img.shields.io/badge/Release-Stable-brightgreen.svg)]()
 [![Python 3.x](https://img.shields.io/badge/python-3.x-blue.svg)]()
 [![Awesome](https://awesome.re/badge.svg)](https://awesome.re)
+# ***Author*** : Georgios Zervakis
+
+# ***Description***: 
+
+This repository hosts a basic IPv4 port scanner written in Python 3.9. It was created as part of an exercise and general programming practise. You can use it to either improve your Python/programming skills or to configure it in a target machine where other 3rd party scanning tools are not available e.g. nmap.
+
+## ✔️ ***Features***:
+
+- __Infromation Modules__ :
+
+- [x] IPv4 Port Scanner for both TCP/UDP network protocols
