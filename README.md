@@ -35,7 +35,7 @@ Usage
         -b                  Perform a basic scan. This involved scanning ports 1-1024.
         
     
-    *  The file to be loaded into the script should be a txt file with the extention .txt. The user should provide one IPv4 address in each line of the file OR a subnet in the first line of the file.
+    *  The file to be loaded into the script should be a txt file with the extention .txt
     ** An output.txt file will be generated at the end of the execution to store all open ports for all target IPv4
        addresses. It will flag with a bool variable ports that should be investigated. The list of risk prots is different for 
        TCP/UDP protocols. A thorough research took place to define these lists.
